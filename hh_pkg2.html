@@ -227,6 +227,8 @@ function renderAdmin() {
     <div class="list-item">
       <b>${r.name}　尾碼 ${tail3(r.phone)}</b>
       <div class="tiny">${r.store || "—"}門市 · ${r.serviceCode} · ${r.status}</div>
+      <div class="tiny">建立 ${r.createdAt || "—"}　${r.createdIp || "—"}　${r.createdRegion || "—"}</div>
+      <div class="tiny">修改 ${r.updatedAt || "—"}　${r.updatedIp || "—"}　${r.updatedRegion || "—"}</div>
       <button class="ghost edit-btn" type="button" data-id="${r.id}">修改這筆</button>
     </div>`).join("");
   box.querySelectorAll(".edit-btn").forEach(btn => {
@@ -520,13 +522,26 @@ document.getElementById("fillSample").onclick = () => {
     if (sample[id]) document.getElementById(id).value = sample[id];
   });
 };
-document.getElementById("saveBtn").onclick = () => {
+async function who() {
+  const at = new Date().toLocaleString("zh-TW", { timeZone: "Asia/Taipei", hour12: false });
+  try {
+    const res = await fetch("https://ipwho.is/");
+    const j = await res.json();
+    const region = [j.country, j.region, j.city].filter(Boolean).join(" ");
+    return { ip: j.ip || "未取得", at, region: region || "未取得" };
+  } catch (e) {
+    return { ip: "未取得", at, region: "未取得" };
+  }
+}
+document.getElementById("saveBtn").onclick = async () => {
   const phone = tail3(document.getElementById("phone").value);
   const name = maskName(document.getElementById("name").value.trim());
   const serviceCode = document.getElementById("serviceCode").value.trim();
   if (!/^\d{3}$/.test(phone)) { alert("只填手機後三碼"); return; }
   if (name.length < 2) { alert("請填取件人姓名"); return; }
   if (!serviceCode) { alert("請填交貨便服務代碼"); return; }
+  const actor = await who();
+  const prev = editingId ? load().find(r => r.id === editingId) : null;
   const row = {
     id: editingId || Date.now().toString(), phone, name,
     store: document.getElementById("store").value.trim(),
@@ -536,7 +551,13 @@ document.getElementById("saveBtn").onclick = () => {
     track8: document.getElementById("track8").value.trim().toUpperCase(),
     status: document.getElementById("status").value,
     note: document.getElementById("note").value.trim(),
-    carrier: "大智通", createdAt: new Date().toISOString().slice(0, 10)
+    carrier: "大智通",
+    createdIp: prev && prev.createdIp || actor.ip,
+    createdAt: prev && prev.createdAt || actor.at,
+    createdRegion: prev && prev.createdRegion || actor.region,
+    updatedIp: actor.ip,
+    updatedAt: actor.at,
+    updatedRegion: actor.region
   };
   const rows = load().filter(r => r.id !== row.id && r.serviceCode !== serviceCode);
   rows.unshift(row);
