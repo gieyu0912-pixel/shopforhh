@@ -166,12 +166,17 @@ function editProductBox(p){
   </form>`;
 }
 
+function loginStamp(l){
+  const date = String(l.date||"").slice(0,10);
+  let clock = String(l.clock||"");
+  const hit = clock.match(/(\d{2}:\d{2}:\d{2})/);
+  if (hit) clock = hit[1];
+  const ts = Date.parse(date+"T"+clock) || Date.parse(l.time||"") || Number(String(l.id||"").replace(/\D/g,"")) || 0;
+  return { ts, date, clock };
+}
 function renderLogin(){
   const cutoff = Date.now() - 30*24*60*60*1000;
-  const rows = (state.remoteLogins || state.logins || []).filter(l=>{
-    const ts = Number(String(l.id||"").replace(/^L/,"")) || Date.parse(l.time||"") || 0;
-    return ts >= cutoff;
-  });
+  const rows = (state.remoteLogins || state.logins || []).map(l=>{ const s = loginStamp(l); return { ...l, date:s.date, clock:s.clock, _ts:s.ts }; }).filter(l=> l._ts >= cutoff);
   const groups = {};
   rows.forEach(l=>{ const ip = l.ip || "讀不到"; (groups[ip]=groups[ip]||[]).push(l); });
   const blocks = Object.keys(groups).map(ip=>{
@@ -403,7 +408,7 @@ function loadRemoteLogins(){
   if (state._loadingLogs || state._logsLoaded) return;
   state._loadingLogs = true;
   fetch(LOG_URL).then(r=>r.json()).then(list=>{
-    state.remoteLogins = Array.isArray(list) ? list.map(x=>({ ...x, id:"R"+(Date.parse(x.date+" "+x.clock)||Date.now()) })) : [];
+    state.remoteLogins = Array.isArray(list) ? list.map(x=>({ ...x, id:"R"+Date.now() })) : [];
     state.logStatus = "";
     state._logsLoaded = true;
     state._loadingLogs = false;
