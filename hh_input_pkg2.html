@@ -167,16 +167,27 @@ function editProductBox(p){
 }
 
 function loginStamp(l){
+  if (l.time && String(l.id||"").indexOf("L")===0) {
+    const ts = Number(String(l.id).replace(/\D/g,"")) || Date.parse(l.time) || 0;
+    return { ts, date: l.date || "", clock: l.clock || "" };
+  }
+  const d = new Date(l.date);
+  const c = new Date(l.clock);
+  if (!isNaN(d.getTime()) && !isNaN(c.getTime())) {
+    const ts = d.getTime() + ((c.getUTCHours()*60+c.getUTCMinutes())*60+c.getUTCSeconds())*1000;
+    const local = new Date(ts);
+    const p = n => String(n).padStart(2,"0");
+    return { ts, date: local.getFullYear()+"-"+p(local.getMonth()+1)+"-"+p(local.getDate()), clock: p(local.getHours())+":"+p(local.getMinutes())+":"+p(local.getSeconds()) };
+  }
   const date = String(l.date||"").slice(0,10);
-  let clock = String(l.clock||"");
-  const hit = clock.match(/(\d{2}:\d{2}:\d{2})/);
-  if (hit) clock = hit[1];
-  const ts = Date.parse(date+"T"+clock) || Date.parse(l.time||"") || Number(String(l.id||"").replace(/\D/g,"")) || 0;
-  return { ts, date, clock };
+  const ts = Date.parse(l.time||date) || 0;
+  return { ts, date, clock: l.clock || "" };
 }
 function renderLogin(){
   const cutoff = Date.now() - 30*24*60*60*1000;
-  const rows = (state.remoteLogins || state.logins || []).map(l=>{ const s = loginStamp(l); return { ...l, date:s.date, clock:s.clock, _ts:s.ts }; }).filter(l=> l._ts >= cutoff);
+  const merged = (state.remoteLogins||[]).concat(state.logins||[]);
+  const rows = merged.map(l=>{ const s = loginStamp(l); return { ...l, date:s.date, clock:s.clock, _ts:s.ts }; }).filter(l=> l._ts >= cutoff);
+  rows.sort((a,b)=>b._ts-a._ts);
   const groups = {};
   rows.forEach(l=>{ const ip = l.ip || "讀不到"; (groups[ip]=groups[ip]||[]).push(l); });
   const blocks = Object.keys(groups).map(ip=>{
