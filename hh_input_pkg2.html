@@ -416,15 +416,14 @@ function showGate(target){
   document.getElementById("pw").focus();
 }
 function loadRemoteLogins(){
-  if (state._loadingLogs || state._logsLoaded) return;
+  if (state._loadingLogs) return;
   state._loadingLogs = true;
-  fetch(LOG_URL).then(r=>r.json()).then(list=>{
-    state.remoteLogins = Array.isArray(list) ? list.map(x=>({ ...x, id:"R"+Date.now() })) : [];
-    state.logStatus = "";
-    state._logsLoaded = true;
+  fetch(LOG_URL+"?t="+Date.now(), { cache:"no-store" }).then(r=>r.json()).then(list=>{
+    state.remoteLogins = Array.isArray(list) ? list : [];
+    state.logStatus = " 共用表 "+state.remoteLogins.length+" 筆。";
     state._loadingLogs = false;
     if (page==="login") render();
-  }).catch(()=>{ state.logStatus = " 共用紀錄讀不到，先顯示這支手機的。"; state._loadingLogs = false; if (page==="login") render(); });
+  }).catch(()=>{ state.logStatus = " 共用表讀不到。"; state._loadingLogs = false; if (page==="login") render(); });
 }
 function sendLogin(item){
   fetch(LOG_URL, { method:"POST", mode:"no-cors", headers:{ "Content-Type":"text/plain;charset=utf-8" }, body: JSON.stringify(item) }).catch(()=>{});
