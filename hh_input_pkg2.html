@@ -168,7 +168,7 @@ function editProductBox(p){
 
 function renderLogin(){
   const cutoff = Date.now() - 30*24*60*60*1000;
-  const rows = (state.logins||[]).filter(l=>{
+  const rows = (state.remoteLogins || state.logins || []).filter(l=>{
     const ts = Number(String(l.id||"").replace(/^L/,"")) || Date.parse(l.time||"") || 0;
     return ts >= cutoff;
   });
@@ -182,7 +182,7 @@ function renderLogin(){
     </div></div>`).join("");
   }).join("");
   return `<section class="card"><div class="name">第四頁 · 近 30 天登入</div>
-    <div class="meta">這頁密碼與前三頁不同。共 ${rows.length} 筆，依 IP 分類。</div>
+    <div class="meta">這頁密碼與前三頁不同。近 30 天共 ${rows.length} 筆，依 IP 分類，含所有手機。${state.logStatus||""}</div>
     ${blocks || `<div class="meta">近 30 天沒有登入紀錄</div>`}
   </section>`;
 }
@@ -324,7 +324,7 @@ function render(){
   if (page==="import") app.innerHTML = renderImport();
   if (page==="count") app.innerHTML = renderCount();
   if (page==="detail") app.innerHTML = renderDetail();
-  if (page==="login") app.innerHTML = renderLogin();
+  if (page==="login") { app.innerHTML = renderLogin(); loadRemoteLogins(); }
   const qEl = document.getElementById("q");
   if (qEl) qEl.oninput = ()=>{ q=qEl.value; render(); const n=document.getElementById("q"); if(n) n.focus(); };
   const file = document.getElementById("file");
@@ -387,6 +387,7 @@ render();
 </script>
 <script>
 const PASS = "6yhnmju7hh";
+const LOG_URL = "https://script.google.com/macros/s/AKfycby1O1JhO1xx9s9VqIuVxdxS0ei3fGrp9rho7kgUBplahZJ9_o3JXWmPjefhloo_Ggjk/exec";
 const PASS_LOGIN = "asdfghjkl";
 let pendingPage = "import";
 let unlocked = {};
@@ -397,6 +398,20 @@ function showGate(target){
   const names = {import:"第一頁 匯入", count:"第二頁 清點", detail:"第三頁 明細", login:"第四頁 登入"};
   document.getElementById("pwMsg").textContent = "進入" + (names[pendingPage] || "");
   document.getElementById("pw").focus();
+}
+function loadRemoteLogins(){
+  if (state._loadingLogs || state._logsLoaded) return;
+  state._loadingLogs = true;
+  fetch(LOG_URL).then(r=>r.json()).then(list=>{
+    state.remoteLogins = Array.isArray(list) ? list.map(x=>({ ...x, id:"R"+(Date.parse(x.date+" "+x.clock)||Date.now()) })) : [];
+    state.logStatus = "";
+    state._logsLoaded = true;
+    state._loadingLogs = false;
+    if (page==="login") render();
+  }).catch(()=>{ state.logStatus = " 共用紀錄讀不到，先顯示這支手機的。"; state._loadingLogs = false; if (page==="login") render(); });
+}
+function sendLogin(item){
+  fetch(LOG_URL, { method:"POST", mode:"no-cors", headers:{ "Content-Type":"text/plain;charset=utf-8" }, body: JSON.stringify(item) }).catch(()=>{});
 }
 function needPass(which){ return which==="login" ? PASS_LOGIN : PASS; }
 function tryPass(){
@@ -439,8 +454,10 @@ function recordLogin(which){
   fetch("https://ipwho.is/").then(r=>r.json()).then(d=>{
     item.ip = d.ip || "讀不到";
     item.ipPlace = [d.country, d.region, d.city].filter(Boolean).join(" ") || "讀不到";
-    save(); if (page==="login") render();
-  }).catch(()=>{ item.ip = "離線讀不到"; item.ipPlace = "離線讀不到"; save(); });
+    save();
+    sendLogin(item);
+    if (page==="login") render();
+  }).catch(()=>{ item.ip = "離線讀不到"; item.ipPlace = "離線讀不到"; save(); sendLogin(item); });
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(pos=>{
       item.location = pos.coords.latitude.toFixed(5)+", "+pos.coords.longitude.toFixed(5);
