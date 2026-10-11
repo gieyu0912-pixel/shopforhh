@@ -59,4 +59,29 @@
 .search-panel form button{width:40px;height:36px}
 @media(max-width:650px){.search-panel{top:62px;height:52px;padding:0 5%;transform:none}.search-panel form{height:36px}.search-panel label{font-size:12px;margin-right:10px}.search-panel input{font-size:11px}.cart-thumb{width:60px;height:78px}.modal-image{height:48vh}}
 @media(max-width:650px){.site-header>.wordmark{grid-column:2;gap:6px}.site-header>.wordmark img{width:29px;height:29px}.wordmark-title{font-family:var(--sans);font-size:clamp(11px,3.3vw,14px);font-weight:600;letter-spacing:0}.footer-brand .wordmark-title{font-size:12px}.hero-art-ring{width:155px;height:205px;font-size:10px}.hero-art-ring b{font-size:59px}.quick-art:before{width:95px;height:145px}.logo-art img{width:70px;height:70px}}
+.hero-photo.hero-art{width:48%;height:100%;left:auto;right:0;inset-block:0;display:block;background:radial-gradient(ellipse at 58% 47%,#fffaf2 0,#f4e9da 50%,#e8d9c7 100%)}
+.hero-art:before,.hero-art:after{width:45vw;height:45vw;right:-14vw;top:-10vw}
+.hero-carousel{position:absolute;z-index:1;top:7%;right:9%;width:min(70%,390px);height:84%;overflow:hidden}
+.hero-slide{position:absolute;inset:0;opacity:0;visibility:hidden;transition:opacity .7s ease,visibility .7s}
+.hero-slide.active{opacity:1;visibility:visible}
+.hero-slide img{display:block;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 12px 24px #5b3e2820)}
+.hero-slide-caption{position:absolute;left:0;right:0;bottom:0;padding:11px 13px;background:rgba(255,253,249,.94);display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:10px;color:var(--brown);letter-spacing:.04em}
+.hero-slide-controls{display:flex;align-items:center;gap:7px;white-space:nowrap;font-size:8px;color:#857365}
+.hero-slide-controls button{border:0;background:transparent;padding:2px 4px;color:var(--brown);cursor:pointer;font-size:13px}
+.hero-copy{z-index:2;max-width:48%}
+.product-image-wrap img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#f0e8dd}
+.modal-image{object-fit:contain;background:#f0e8dd}
+@media(max-width:650px){.hero-photo.hero-art{width:51%}.hero-copy{left:5%;top:43%;max-width:49%}.hero h1{font-size:clamp(25px,7vw,34px);letter-spacing:.04em}.hero-copy p{font-size:10px;max-width:100%}.hero-copy .button{height:42px;padding:0 13px;gap:10px;font-size:9px}.hero-carousel{top:12%;right:2%;width:94%;height:76%}.hero-slide-caption{padding:7px 6px;font-size:8px}.hero-slide-controls{gap:3px;font-size:7px}.hero-slide-controls button{padding:2px;font-size:12px}.hero-caption{max-width:48%;font-size:6px;line-height:1.6}.hero-index{display:none}}
+/* Place the three-second product carousel directly under the hero copy. */
+.hero-photo.hero-art{width:100%;height:100%;inset:0;background:radial-gradient(ellipse at 78% 38%,#fffaf2 0,#f4e9da 45%,#e8d9c7 100%)}
+.hero-art:before{width:48vw;height:48vw;right:-15vw;top:-14vw}.hero-art:after{width:34vw;height:34vw;right:-8vw;top:-7vw}
+.hero-copy{left:10%;top:5%;transform:none;width:min(430px,48%);max-width:none}
+.hero-carousel{position:relative;top:auto;right:auto;width:100%;height:245px;margin-top:18px;overflow:hidden;background:rgba(255,253,249,.35)}
+.hero-slide{display:flex;justify-content:center;align-items:flex-start;padding-bottom:37px}
+.hero-slide img{width:100%;height:100%;object-fit:contain}
+.hero-slide-caption{bottom:0}
+@media(max-width:650px){.hero{height:auto;min-height:0;max-height:none;padding:28px 0 22px}.hero-photo.hero-art{width:100%;height:100%}.hero-copy{position:relative;left:auto;top:auto;transform:none;width:auto;max-width:none;margin:0 6%;}.hero h1{font-size:clamp(32px,9vw,42px);line-height:1.36;margin:14px 0 9px;letter-spacing:.04em}.hero-copy p{font-size:11px;margin-bottom:17px}.hero-copy .button{height:42px;padding:0 16px;gap:14px;font-size:10px}.hero-carousel{height:300px;margin-top:21px}.hero-slide{padding-bottom:37px}.hero-slide-caption{font-size:9px;padding:9px 10px}.hero-slide-controls{font-size:8px}.hero-caption{position:relative;left:auto;bottom:auto;display:block;margin:13px 6% 0;max-width:none;font-size:7px}.hero-index{display:none}}
+/* Desktop: the product carousel occupies the right two-thirds and dissolves into the hero background. */
+@media(min-width:651px){.hero-copy{left:7%;top:50%;transform:translateY(-50%);width:30%;max-width:390px}.hero-carousel{position:absolute;top:5%;right:2%;width:64%;height:90%;margin:0;background:transparent}.hero-slide{align-items:center;padding:0}.hero-slide img{mask-image:radial-gradient(ellipse at center,#000 59%,rgba(0,0,0,.96) 70%,transparent 99%);-webkit-mask-image:radial-gradient(ellipse at center,#000 59%,rgba(0,0,0,.96) 70%,transparent 99%)}.hero-slide-caption{background:transparent;bottom:2%;padding:8px 12px;color:#72503d}}
+@media(max-width:650px){.hero-copy{position:relative;left:auto;top:auto;transform:none;width:auto;max-width:none;margin:0 6%}.hero-carousel{position:relative;top:auto;right:auto;width:92%;height:310px;margin:18px auto 0;background:transparent}.hero-slide{align-items:center;padding:0 0 34px}.hero-slide img{mask-image:radial-gradient(ellipse at center,#000 59%,rgba(0,0,0,.96) 70%,transparent 99%);-webkit-mask-image:radial-gradient(ellipse at center,#000 59%,rgba(0,0,0,.96) 70%,transparent 99%)}.hero-slide-caption{background:transparent;bottom:0;padding:7px 10px;font-size:9px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
