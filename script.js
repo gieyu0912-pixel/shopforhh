@@ -1,13 +1,13 @@
 /* Replace sample products below with your own licensed product photography and inventory. */
 const products=[
- {id:'p01',name:'慵懶感柔棉落肩上衣',category:'上衣',price:680,oldPrice:780,tag:'本週新品',sizes:['F','2L','3L'],image:'https://images.unsplash.com/photo-1551163943-3f6a855d1153?auto=format&fit=crop&w=900&q=82',description:'柔軟親膚的棉感布料，搭配自在落肩剪裁。日常單穿或作為層次搭配都輕鬆好看。'},
- {id:'p02',name:'法式小立領細緻襯衫',category:'上衣',price:880,tag:'人氣選品',sizes:['F','2L','3L'],image:'https://images.unsplash.com/photo-1598554747436-c9293d6a588f?auto=format&fit=crop&w=900&q=82',description:'帶一點法式氣息的日常襯衫，細節俐落、布料柔順，工作日與週末都能自在穿著。'},
- {id:'p03',name:'垂墜感打褶寬褲',category:'下身',price:980,tag:'顯瘦推薦',sizes:['F','2L','3L'],image:'https://images.unsplash.com/photo-1506629905607-d9f44d1cbb6b?auto=format&fit=crop&w=900&q=82',description:'腰頭舒適、褲管俐落的高腰寬褲。垂墜布料修飾腿部線條，搭配簡單上衣就很完整。'},
- {id:'p04',name:'日常柔感針織罩衫',category:'上衣',price:1080,tag:'百搭單品',sizes:['F','2L','3L'],image:'https://images.unsplash.com/photo-1576566588028-4147f3842f27?auto=format&fit=crop&w=900&q=82',description:'輕柔針織觸感，冷氣房與換季時節的貼心外搭。寬鬆版型保留舒適活動空間。'},
- {id:'p05',name:'微光日常細肩洋裝',category:'洋裝',price:1280,tag:'新品上市',sizes:['F','2L','3L'],image:'https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=900&q=82',description:'自然微光下輕輕搖曳的洋裝，簡單搭配配件便有剛好的柔美氣息，穿著輕盈舒適。'},
- {id:'p06',name:'鬆弛感抽繩直筒長褲',category:'下身',price:880,tag:'舒適推薦',sizes:['F','2L','3L'],image:'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?auto=format&fit=crop&w=900&q=82',description:'好穿脫的彈性腰頭與抽繩設計，直筒褲型自然修飾比例，讓一整天都保有自在感。'},
- {id:'p07',name:'簡約柔軟圓領洋裝',category:'洋裝',price:1180,tag:'人氣回購',sizes:['F','2L','3L'],image:'https://images.unsplash.com/photo-1539008835657-9e8e9680c956?auto=format&fit=crop&w=900&q=82',description:'一件就能出門的日常洋裝，舒服的材質與不挑場合的版型，輕鬆穿出自己的樣子。'},
- {id:'p08',name:'復古細帶肩背小包',category:'配件',price:790,tag:'穿搭點綴',sizes:['F'],image:'https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=900&q=82',description:'以溫暖色調為日常穿搭增添一點復古感。小巧容量適合收納隨身小物，簡單好搭。'}
+ {id:'p01',name:'慵懶感柔棉落肩上衣',category:'上衣',price:680,oldPrice:780,tag:'本週新品',sizes:['F','2L','3L'],image:'assets/reference-products-a.jpg',description:'柔軟親膚的棉感布料，搭配自在落肩剪裁。日常單穿或作為層次搭配都輕鬆好看。'},
+ {id:'p02',name:'法式小立領細緻襯衫',category:'上衣',price:880,tag:'人氣選品',sizes:['F','2L','3L'],image:'assets/reference-products-a.jpg',description:'帶一點法式氣息的日常襯衫，細節俐落、布料柔順，工作日與週末都能自在穿著。'},
+ {id:'p03',name:'垂墜感打褶寬褲',category:'下身',price:980,tag:'顯瘦推薦',sizes:['F','2L','3L'],image:'assets/reference-products-b.jpg',description:'腰頭舒適、褲管俐落的高腰寬褲。垂墜布料修飾腿部線條，搭配簡單上衣就很完整。'},
+ {id:'p04',name:'日常柔感針織罩衫',category:'上衣',price:1080,tag:'百搭單品',sizes:['F','2L','3L'],image:'assets/reference-products-a.jpg',description:'輕柔針織觸感，冷氣房與換季時節的貼心外搭。寬鬆版型保留舒適活動空間。'},
+ {id:'p05',name:'微光日常細肩洋裝',category:'洋裝',price:1280,tag:'新品上市',sizes:['F','2L','3L'],image:'assets/reference-products-b.jpg',description:'自然微光下輕輕搖曳的洋裝，簡單搭配配件便有剛好的柔美氣息，穿著輕盈舒適。'},
+ {id:'p06',name:'鬆弛感抽繩直筒長褲',category:'下身',price:880,tag:'舒適推薦',sizes:['F','2L','3L'],image:'assets/reference-products-b.jpg',description:'好穿脫的彈性腰頭與抽繩設計，直筒褲型自然修飾比例，讓一整天都保有自在感。'},
+ {id:'p07',name:'簡約柔軟圓領洋裝',category:'洋裝',price:1180,tag:'人氣回購',sizes:['F','2L','3L'],image:'assets/reference-products-b.jpg',description:'一件就能出門的日常洋裝，舒服的材質與不挑場合的版型，輕鬆穿出自己的樣子。'},
+ {id:'p08',name:'復古細帶肩背小包',category:'配件',price:790,tag:'穿搭點綴',sizes:['F'],image:'assets/reference-products-a.jpg',description:'以溫暖色調為日常穿搭增添一點復古感。小巧容量適合收納隨身小物，簡單好搭。'}
 ];
 const money=n=>'$'+n.toLocaleString('zh-TW');
 const newGrid=document.querySelector('#newGrid'),shopGrid=document.querySelector('#shopGrid');
