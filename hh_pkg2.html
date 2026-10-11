@@ -314,9 +314,9 @@ function prep(file) {
         const pw = maxX - minX, ph = maxY - minY;
         paper.width = pw; paper.height = ph;
         paper.getContext("2d").drawImage(canvas, minX, minY, pw, ph, 0, 0, pw, ph);
-        const nw = Math.round(pw * 0.62), nh = Math.round(ph * 0.28);
+        const nw = Math.round(pw * 0.68), nh = Math.round(ph * 0.22);
         name.width = nw; name.height = nh;
-        name.getContext("2d").drawImage(paper, Math.round(pw * 0.30), Math.round(ph * 0.08), nw, nh, 0, 0, nw, nh);
+        name.getContext("2d").drawImage(paper, Math.round(pw * 0.28), Math.round(ph * 0.36), nw, nh, 0, 0, nw, nh);
       } else {
         paper.width = w; paper.height = h;
         paper.getContext("2d").drawImage(canvas, 0, 0);
@@ -398,13 +398,15 @@ function fieldAfter(text, label) {
 }
 function parseLabel(text) {
   const flat = text.replace(/[　]/g, " ");
+  const labeled = pick(flat, /服務代碼[^A-Z0-9]{0,12}([A-Z]\d{11})/i).toUpperCase();
   const codes = [...flat.matchAll(/([A-Z]\d{11})/ig)].map(m => m[1].toUpperCase());
-  const serviceCode = codes[0] || "";
-  const tracking = pick(flat, /(756888[A-Z0-9]{8,16})/i).toUpperCase();
+  const serviceCode = labeled || codes.find(c => c.startsWith("G")) || codes[0] || "";
+  const tracking = pick(flat, /(756888[A-Z]\d{8,12})/i).toUpperCase();
   const orderNo = pick(flat, /(26\d{12})/);
   let store = fieldAfter(flat, "門市");
   let name = fieldAfter(flat, "取件人");
   let sender = fieldAfter(flat, "寄件人");
+  if (!store) store = fieldAfter(flat, "取件");
   if (name.startsWith("寄件")) name = "";
   return { serviceCode, tracking, orderNo, store, name, sender, codes };
 }
