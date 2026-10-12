@@ -258,6 +258,20 @@ function renderCount(){
   return `${kpis()}<section class="card">
     <div class="name">第二頁 · 清點</div>
     <div class="meta">先選廠商（SY01 的 SY、DY02 的 DY），再選款號、商品、顏色、尺寸，最後填本次數量。</div>
+    <div class="vendor-table"><div class="name">廠商代碼表</div>
+    <table><thead><tr><th>廠商</th><th>直播編號</th><th>廠商</th><th>直播編號</th></tr></thead><tbody>
+      <tr><td>密絲大碼內衣內褲</td><td>A</td><td>泡芙(大陸)</td><td>SP</td></tr>
+      <tr><td>愛大碼</td><td>AM</td><td>S+SISTER</td><td>SS</td></tr>
+      <tr><td>Beauty·唯美 美裔瑜伽</td><td>BT</td><td>時衣</td><td>SY</td></tr>
+      <tr><td>沐熙歐韓大碼</td><td>CC</td><td>TFTF包包店</td><td>TF</td></tr>
+      <tr><td>西柚</td><td>CY</td><td>森菜</td><td>TS</td></tr>
+      <tr><td>大七</td><td>D7</td><td>一檸</td><td>Y</td></tr>
+      <tr><td>朵朵</td><td>DU</td><td>佐納</td><td>ZU</td></tr>
+      <tr><td>GIRLPRO大碼女鞋</td><td>GO</td><td></td><td></td></tr>
+      <tr><td>九九</td><td>JJ</td><td></td><td></td></tr>
+      <tr><td>品向</td><td>PS</td><td></td><td></td></tr>
+    </tbody></table>
+  </div>
     <form id="countForm">
       <label>廠商</label><select name="vendor">${options(vendors, form.vendor, "選廠商")}</select>
       <label>款號</label><select name="sku" ${form.vendor?"":"disabled"}>${options(skus, form.sku, "選款號")}</select>
@@ -272,9 +286,47 @@ function renderCount(){
     </form>${rec}
     ${cabinetMap()}
   </section>
+  
   <section class="card"><div class="name">這一層的列</div>
     ${(lines.length?lines:afterVendor.slice(0,8)).map(p=> editing===p.id? editProductBox(p) : rowHtml(p)).join("") || `<div class="meta">先選廠商</div>`}
   </section>`;
+}
+
+function startOf(range){
+  const n = new Date();
+  if (range==="day") return new Date(n.getFullYear(), n.getMonth(), n.getDate());
+  if (range==="week") {
+    const d = new Date(n.getFullYear(), n.getMonth(), n.getDate());
+    const day = d.getDay() || 7;
+    d.setDate(d.getDate() - day + 1);
+    return d;
+  }
+  return new Date(n.getFullYear(), n.getMonth(), 1);
+}
+function exportStats(range){
+  const from = startOf(range).getTime();
+  const map = {};
+  state.counts.filter(c=>new Date(c.time).getTime()>=from).forEach(c=>{
+    const p = product(c.productId) || {};
+    const key = c.productId;
+    if (!map[key]) map[key] = { live:p.live||"", sku:p.sku||"", name:p.name||"", color:p.color||"", size:p.size||"", qty:0, times:0, zones:{} };
+    map[key].qty += Number(c.qty)||0;
+    map[key].times += 1;
+    if (c.zone) map[key].zones[c.zone] = (map[key].zones[c.zone]||0) + Number(c.qty||0);
+  });
+  const rows = Object.values(map).map(r=>({
+    "直播編號": r.live, "廠商款號": r.sku, "商品": r.name, "顏色": r.color, "尺寸": r.size,
+    "清點件數": r.qty, "清點次數": r.times,
+    "存放區": Object.entries(r.zones).map(([z,n])=>z+" "+n).join("、")
+  }));
+  const label = {day:"本日", week:"本週", month:"本月"}[range];
+  if (!rows.length) return toast(label+"沒有清點");
+  const ws = XLSX.utils.json_to_sheet(rows);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, label+"清點統計");
+  const d = new Date();
+  const stamp = d.getFullYear()+("0"+(d.getMonth()+1)).slice(-2)+("0"+d.getDate()).slice(-2);
+  XLSX.writeFile(wb, label+"清點統計_"+stamp+".xlsx");
 }
 function renderDetail(){
   const vendors = uniq(state.products.map(p=>vendorOf(p.live)));
@@ -297,6 +349,7 @@ function renderDetail(){
   return `${kpis()}<section class="card">
     <div class="name">第三頁 · 清點明細</div>
     <div class="meta">選到單列後，下方列出每次清點的日期、時間、數量、總量。每筆可修改。</div>
+    <div class="actions"><button class="ghost" id="expDay" type="button">匯出本日</button><button class="ghost" id="expWeek" type="button">匯出本週</button><button class="ghost" id="expMonth" type="button">匯出本月</button></div>
     <label>廠商</label><select name="vendor" class="cascade">${options(vendors, form.vendor, "選廠商")}</select>
     <label>款號</label><select name="sku" class="cascade">${options(skus, form.sku, "選款號")}</select>
     <label>商品</label><select name="name" class="cascade">${options(names, form.name, "選商品")}</select>
@@ -357,6 +410,12 @@ function render(){
   const builtin = document.getElementById("builtin");
   if (builtin) builtin.onclick = ()=>{ state = seed(); save(); toast("已載入商品總表"); render(); };
   const exp = document.getElementById("export");
+  const expDay = document.getElementById("expDay");
+  if (expDay) expDay.onclick = ()=>exportStats("day");
+  const expWeek = document.getElementById("expWeek");
+  if (expWeek) expWeek.onclick = ()=>exportStats("week");
+  const expMonth = document.getElementById("expMonth");
+  if (expMonth) expMonth.onclick = ()=>exportStats("month");
   if (exp) exp.onclick = ()=>{
     const data = state.products.map(p=>({ "直播編號":p.live, "廠商款號":p.sku, "商品":p.name, "顏色":p.color, "尺寸":p.size, "總件數":p.poQty==null?"":p.poQty, "已清點":totalOf(p.id) }));
     const ws = XLSX.utils.json_to_sheet(data);
@@ -411,7 +470,7 @@ function render(){
 render();
 </script>
 <script>
-const PASS = "6yhnmju7hh";
+const PASS = "howhow2021";
 const LOG_URL = "https://script.google.com/macros/s/AKfycby1O1JhO1xx9s9VqIuVxdxS0ei3fGrp9rho7kgUBplahZJ9_o3JXWmPjefhloo_Ggjk/exec";
 const PASS_LOGIN = "asdfghjkl";
 let pendingPage = "import";
