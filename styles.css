@@ -215,6 +215,7 @@
 .policy-content p,.policy-content li{font-size:14px;line-height:2;letter-spacing:.025em;color:#4c433b}
 .policy-content p{margin:8px 0}
 .policy-content ul{padding-left:1.5em;margin:10px 0}
+.policy-content ol{padding-left:1.5em;margin:10px 0}
 .policy-content li{padding-left:3px;margin:4px 0}
 .policy-content strong{font-weight:600;color:#463326}
 .policy-contact{margin-top:28px}
@@ -251,3 +252,18 @@
 }
 .policy-content h3{font:500 16px/1.7 var(--sans);letter-spacing:.05em;color:#554234;margin:20px 0 6px}
 .policy-content h3:first-of-type{margin-top:12px}
+/* Mobile viewport safeguards: keep floating support and footer branding inside the viewport. */
+@media(max-width:650px){
+  html,body{width:100%;max-width:100%;overflow-x:hidden}
+  .site-header,.search-panel,.quick-links,.intro,.product-section,.feature-banner,.shop-section,.newsletter,.site-footer{min-width:0;max-width:100%}
+  .quick-links{grid-template-columns:repeat(2,minmax(0,1fr));width:100%;padding-inline:4%;gap:8px}
+  .quick-card{min-width:0}
+  .footer-brand,.footer-brand .wordmark{min-width:0;max-width:100%}
+  .footer-brand .wordmark{align-items:center;gap:10px}
+  .footer-brand .wordmark img{display:block;flex:0 0 44px;width:44px;height:44px;object-fit:contain;mix-blend-mode:multiply;border-radius:0;background:#f4eee6}
+  .footer-brand .wordmark-title{min-width:0;white-space:normal;line-height:1.6}
+  .footer-links{width:100%;min-width:0;flex-wrap:wrap;gap:26px clamp(24px,8vw,40px)}
+  .footer-links>div{min-width:0;overflow-wrap:anywhere}
+  .copyright{min-width:0;flex-wrap:wrap;overflow-wrap:anywhere}
+  .line-float{right:max(12px,env(safe-area-inset-right));bottom:max(12px,env(safe-area-inset-bottom));max-width:calc(100vw - 24px);white-space:nowrap}
+}
