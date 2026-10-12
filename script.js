@@ -32,9 +32,22 @@ document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.tar
 $('#cartToggle').onclick=()=>{ $('#cartDrawer').classList.add('open');$('#cartDrawer').setAttribute('aria-hidden','false');$('#overlay').classList.add('open')};$('#closeCart').onclick=closeCart;$('#continueShopping').onclick=closeCart;$('#closeModal').onclick=closeProduct;$('#overlay').onclick=()=>{closeCart();closeProduct()};$('#menuToggle').onclick=()=>$('#mainNav').classList.toggle('open');
 $('#searchToggle').onclick=()=>{ $('#searchInput').focus();$('#searchInput').scrollIntoView({behavior:'smooth',block:'nearest'})};$('#searchForm').onsubmit=e=>{e.preventDefault();query=$('#searchInput').value;filter='all';$$('.category-tab').forEach(b=>b.classList.toggle('active',b.dataset.filter==='all'));renderProducts();$('#shop').scrollIntoView({behavior:'smooth'})};
 $('#sortSelect').onchange=e=>{sort=e.target.value==='price-low'?'low':e.target.value==='price-high'?'high':'featured';renderProducts()};$('#newsletterForm').onsubmit=e=>{e.preventDefault();$('#newsletterMessage').textContent='感謝訂閱！正式上線後將收到 HOWHOW 最新消息。';e.target.reset()};$('#checkoutButton').onclick=()=>$('#checkoutMessage').textContent='示範商店尚未串接安全結帳服務。';
-const heroSlides=['p10','p09','p11','p12','p13','p14','p15'].map(id=>products.find(p=>p.id===id)).filter(Boolean);let heroIndex=0;
-function showHeroSlide(i){heroIndex=(i+heroSlides.length)%heroSlides.length;const current=heroSlides[heroIndex],image=$('#heroSlideImage'),link=$('#heroSlideLink');image.src=current.image;image.alt=current.name;link.dataset.productSlide=current.id;$('#heroSlideName').textContent=current.name;$('#heroSlideNumber').textContent=`${String(heroIndex+1).padStart(2,'0')} / ${String(heroSlides.length).padStart(2,'0')}`}
+const heroSlides=[
+ {id:'p09',name:'丹寧挺版修身牛仔外套',image:'assets/46306_0.jpg'},
+ {id:'p14',name:'鏤空蕾絲針織罩衫',image:'assets/46310_0.jpg'},
+ {id:'p12',name:'率性寬翻領皮革感外套',image:'assets/46308_0.jpg'},
+ {id:'p13',name:'輕盈透氣鬆緊腰長裙',image:'assets/46309_0.jpg'},
+ {id:'p10',name:'柔軟羅紋蕾絲針織外套',image:'assets/46304_0.jpg'},
+ {id:'p11',name:'彈性腰頭質感打褶寬褲',image:'assets/46305_0.jpg'},
+ {id:'p15',name:'溫暖質感雙排扣毛呢外套',image:'assets/46307_0.jpg'},
+ {id:'p04',name:'日常柔感針織罩衫',image:'assets/46303_0.jpg'}
+];let heroIndex=0;
+function showHeroSlide(i){heroIndex=(i+heroSlides.length)%heroSlides.length;const current=heroSlides[heroIndex],image=$('#heroSlideImage'),link=$('#heroSlideLink');image.src=current.image;image.alt=`HOWHOW ${current.name}商品穿搭視覺`;link.dataset.productSlide=current.id;$('#heroSlideName').textContent=current.name;$('#heroSlideNumber').textContent=`${String(heroIndex+1).padStart(2,'0')} / ${String(heroSlides.length).padStart(2,'0')}`}
 $('#heroPrev').onclick=()=>showHeroSlide(heroIndex-1);$('#heroNext').onclick=()=>showHeroSlide(heroIndex+1);
 setInterval(()=>showHeroSlide(heroIndex+1),3000);
 $('#heroSlideLink').addEventListener('click',e=>{e.preventDefault();const p=products.find(item=>item.id===$('#heroSlideLink').dataset.productSlide);$('#shop').scrollIntoView({behavior:'smooth'});setTimeout(()=>openProduct(p),350)});
 showHeroSlide(0);
+
+$('#mainNav').addEventListener('click',e=>{if(e.target.closest('a')){$('#mainNav').classList.remove('open');$('#stockDropdown').classList.remove('open');$('#stockMenuToggle').setAttribute('aria-expanded','false')}});
+$('#stockMenuToggle').addEventListener('click',()=>{const open=$('#stockDropdown').classList.toggle('open');$('#stockMenuToggle').setAttribute('aria-expanded',String(open))});
+$('#menuToggle').addEventListener('click',()=>{if(!$('#mainNav').classList.contains('open')){$('#stockDropdown').classList.remove('open');$('#stockMenuToggle').setAttribute('aria-expanded','false')}});

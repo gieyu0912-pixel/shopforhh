@@ -97,3 +97,157 @@
   .hero-caption{z-index:2}
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
+/* DUDO-inspired storefront rhythm: centered brand masthead, quiet navigation, and product-first gallery. */
+.store-masthead{padding:34px 20px 30px;text-align:center;background:#fffdf9;color:#72503d;border-bottom:1px solid #eee7de}
+.masthead-overline{font:10px/1.4 var(--sans);letter-spacing:.28em}
+.store-masthead h2{font:500 clamp(19px,2.3vw,27px)/1.5 var(--serif);letter-spacing:.16em;margin:9px 0 3px}
+.store-masthead p{font-size:10px;letter-spacing:.18em;color:#8f8376;margin:0}
+.site-header{grid-template-columns:1fr auto 1fr}
+.site-header>.wordmark{grid-column:2;justify-self:center}
+.main-nav{gap:clamp(14px,2vw,30px)}
+.main-nav a{font-size:11px;letter-spacing:.08em}
+.hero{height:min(610px,58vw);min-height:430px;background:#f4eee6}
+.hero-copy{left:8%;width:29%;max-width:350px}
+.hero-carousel{right:3%;width:65%;height:92%;top:4%}
+.hero-slide-caption{font-size:10px;letter-spacing:.1em}
+.quick-links{margin-top:28px;gap:14px}
+.quick-card{height:170px}
+.product-section{padding-top:20px}
+.section-heading{border-bottom:1px solid var(--line);padding-bottom:17px;margin-bottom:22px}
+.shop-section{padding-top:72px}
+.site-footer{background:#f4eee6;color:#554234}
+.site-footer .wordmark,.site-footer .footer-links b{color:#72503d}
+.footer-brand p,.footer-links>div,.copyright{color:#776b61}
+.copyright{border-color:#dacfc2}
+@media(max-width:900px){.site-header{grid-template-columns:1fr auto 1fr}.main-nav{gap:11px}.main-nav a{font-size:10px}.hero{height:500px;min-height:430px}}
+@media(max-width:650px){
+  .store-masthead{padding:23px 14px 21px}
+  .masthead-overline{font-size:8px}
+  .store-masthead h2{font-size:17px;letter-spacing:.09em;margin:7px 0 2px}
+  .store-masthead p{font-size:8px;letter-spacing:.1em}
+  .site-header{grid-template-columns:34px minmax(0,1fr) 60px}
+  .site-header>.wordmark{grid-column:2}
+  .hero{height:auto;min-height:0;padding:28px 0 22px}
+  .hero-copy{margin:0 6%;width:auto;max-width:none}
+  .hero-carousel{position:relative;top:auto;right:auto;width:92%;height:310px;margin:18px auto 0}
+  .quick-links{margin-top:16px}
+  .product-section{padding-top:10px}
+  .shop-section{padding-top:50px}
+}
+/* Header refinement: give the brand mark its own generous left area, then leave a clear gap before navigation. */
+@media(min-width:901px){
+  .site-header{grid-template-columns:minmax(260px,auto) minmax(0,1fr) auto;column-gap:clamp(38px,5.5vw,82px);padding-inline:5.2%}
+  .site-header>.wordmark{grid-column:1;justify-self:start;flex-direction:row;align-items:center;gap:20px}
+  .site-header>.wordmark img{width:72px;height:72px;object-fit:contain;border-radius:0;mix-blend-mode:multiply}
+  .site-header .wordmark-title{font-size:17px;letter-spacing:.1em;font-weight:500}
+  .site-header .main-nav{grid-column:2;justify-self:start;gap:clamp(18px,2vw,30px);margin-left:10px;white-space:nowrap}
+  .site-header .header-actions{grid-column:3}
+}
+@media(min-width:651px) and (max-width:900px){
+  .site-header{grid-template-columns:minmax(215px,auto) minmax(0,1fr) auto;column-gap:22px;padding-inline:3%}
+  .site-header>.wordmark{grid-column:1;justify-self:start;flex-direction:row;gap:12px}
+  .site-header>.wordmark img{width:56px;height:56px;object-fit:contain;border-radius:0;mix-blend-mode:multiply}
+  .site-header .wordmark-title{font-size:13px;white-space:normal;max-width:150px;line-height:1.5}
+  .site-header .main-nav{grid-column:2;justify-self:start;gap:12px;flex-wrap:wrap}
+  .site-header .header-actions{grid-column:3}
+}
+@media(max-width:650px){
+  .site-header>.wordmark{gap:10px}
+  .site-header>.wordmark img{width:38px;height:38px;object-fit:contain;border-radius:0;mix-blend-mode:multiply}
+  .site-header .wordmark-title{font-size:clamp(11px,3.3vw,14px)}
+}
+@media(min-width:901px){
+  .site-header{grid-template-columns:minmax(310px,auto) minmax(0,1fr) auto;column-gap:clamp(54px,6vw,92px)}
+  .site-header>.wordmark{gap:22px}
+  .site-header>.wordmark img{width:90px;height:90px;clip-path:inset(12%);object-fit:contain}
+  .site-header .main-nav{margin-left:0;gap:clamp(22px,2.2vw,34px)}
+}
+@media(min-width:651px) and (max-width:900px){.site-header>.wordmark img{width:66px;height:66px;clip-path:inset(12%)}}
+@media(max-width:650px){.site-header>.wordmark img{width:48px;height:48px;clip-path:inset(12%)}}
+@media(min-width:901px){
+  .site-header{grid-template-columns:minmax(350px,auto) minmax(0,1fr) auto;column-gap:clamp(64px,7vw,104px)}
+  .site-header>.wordmark{gap:24px}
+  .site-header>.wordmark img{width:104px;height:96px;clip-path:inset(10%);transform:scale(1.12)}
+  .site-header .wordmark-title{white-space:nowrap;font-size:16px}
+}
+@media(min-width:651px) and (max-width:900px){
+  .site-header{grid-template-columns:minmax(240px,auto) minmax(0,1fr) auto;column-gap:38px}
+  .site-header>.wordmark{gap:16px}
+  .site-header>.wordmark img{width:72px;height:68px;transform:scale(1.22)}
+  .site-header .main-nav{gap:11px}
+}
+/* Improve readability of the top navigation links across desktop and tablet layouts. */
+@media(min-width:651px){
+  .site-header .main-nav a{font-size:14px;letter-spacing:.07em}
+  .site-header .main-nav{gap:clamp(16px,1.8vw,28px)}
+}
+@media(min-width:651px) and (max-width:900px){
+  .site-header .main-nav a{font-size:13px;letter-spacing:.03em}
+  .site-header .main-nav{gap:9px}
+}
+@media(max-width:650px){
+  .site-header .main-nav a{font-size:14px;letter-spacing:.06em}
+}
+/* Stock navigation dropdown mirrors the quick category filters in the product section. */
+.nav-dropdown{position:relative;display:flex;align-items:center;height:100%}
+.nav-dropdown-toggle{appearance:none;border:0;background:none;color:inherit;padding:10px 0;font:inherit;font-size:inherit;letter-spacing:inherit;white-space:nowrap;cursor:pointer}
+.nav-dropdown-toggle span{font-size:.85em;margin-left:4px;color:#9a826f}
+.nav-submenu{position:absolute;z-index:40;top:calc(100% - 5px);left:-16px;min-width:160px;padding:8px 0;background:#fffdf9;border:1px solid #eee7de;box-shadow:0 12px 24px #3d29151a;display:none;flex-direction:column}
+.nav-dropdown.open .nav-submenu{display:flex}
+@media(min-width:1101px){.nav-dropdown:hover .nav-submenu{display:flex}}
+.nav-submenu a{padding:10px 16px;font-size:12px!important;letter-spacing:.04em!important;white-space:nowrap}
+.nav-submenu a:hover,.nav-submenu a:focus-visible{background:#f5eee5;color:#72503d}
+@media(max-width:650px){
+  .nav-dropdown{height:auto;display:block;border-bottom:1px solid var(--line)}
+  .nav-dropdown-toggle{width:100%;text-align:left;padding:13px 0;font-size:14px;letter-spacing:.06em}
+  .nav-submenu{position:static;min-width:0;padding:0 0 8px;border:0;box-shadow:none;background:transparent}
+  .nav-submenu a{padding:10px 12px!important;font-size:13px!important}
+}
+/* Clear, readable after-sales information page. */
+.policy-page{background:#f8f4ed;padding:72px 24px 82px;scroll-margin-top:120px}
+.policy-heading,.policy-content{width:min(820px,100%);margin-inline:auto}
+.policy-heading{text-align:center;padding-bottom:30px;border-bottom:1px solid #ded3c6}
+.policy-heading h1{font:500 clamp(25px,3.5vw,38px)/1.5 var(--serif);letter-spacing:.08em;color:#302820;margin:14px 0}
+.policy-heading>p{max-width:680px;margin:0 auto;color:#6e6258;font-size:14px;line-height:2;letter-spacing:.03em}
+.policy-content{padding-top:17px}
+.policy-content>section{padding:24px 0;border-bottom:1px solid #e4dbd1}
+.policy-content h2{font:500 20px/1.6 var(--serif);letter-spacing:.08em;color:#72503d;margin:0 0 12px}
+.policy-content p,.policy-content li{font-size:14px;line-height:2;letter-spacing:.025em;color:#4c433b}
+.policy-content p{margin:8px 0}
+.policy-content ul{padding-left:1.5em;margin:10px 0}
+.policy-content li{padding-left:3px;margin:4px 0}
+.policy-content strong{font-weight:600;color:#463326}
+.policy-contact{margin-top:28px}
+@media(max-width:650px){
+  .policy-page{padding:48px 20px 58px;scroll-margin-top:120px}
+  .policy-heading{text-align:left;padding-bottom:23px}
+  .policy-heading h1{font-size:24px;letter-spacing:.04em}
+  .policy-heading>p,.policy-content p,.policy-content li{font-size:13px}
+  .policy-content>section{padding:20px 0}
+  .policy-content h2{font-size:18px}
+}
+/* Collapse the expanded six-item navigation before it wraps into the sticky header. */
+@media(min-width:651px) and (max-width:1100px){
+  html{scroll-padding-top:132px}
+  .site-header{height:62px;grid-template-columns:40px minmax(0,1fr) 70px;gap:8px;padding-inline:20px}
+  .site-header>.menu-toggle{display:flex;grid-column:1}
+  .site-header>.wordmark{grid-column:2;justify-self:center;flex-direction:row;gap:12px;white-space:nowrap}
+  .site-header>.wordmark img{width:58px;height:58px;clip-path:inset(10%);transform:none}
+  .site-header .wordmark-title{font-size:14px;white-space:nowrap}
+  .site-header .main-nav{display:none;position:absolute;top:61px;left:0;right:0;background:var(--paper);padding:12px 6% 18px;box-shadow:0 10px 15px #35271912;align-items:stretch;flex-direction:column;gap:0;max-height:calc(100dvh - 160px);overflow-y:auto}
+  .site-header .main-nav.open{display:flex}
+  .site-header .main-nav>a{padding:12px 0;border-bottom:1px solid var(--line);font-size:14px;white-space:normal}
+  .site-header .header-actions{grid-column:3;gap:4px}
+  .site-header .header-actions .icon-button{padding:5px}
+  .nav-dropdown{display:block;height:auto;border-bottom:1px solid var(--line)}
+  .nav-dropdown-toggle{width:100%;text-align:left;padding:12px 0;font-size:14px;letter-spacing:.06em}
+  .nav-submenu{position:static;min-width:0;padding:0 0 8px;border:0;box-shadow:none;background:transparent}
+  .nav-submenu a{padding:10px 12px!important;font-size:13px!important}
+  .search-panel{top:62px}
+}
+@media(min-width:651px) and (max-width:1100px){
+  .site-header>.menu-toggle{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:5px;border:0;background:none;padding:0 5px}
+  .site-header>.menu-toggle span{display:block;width:22px;height:1px;background:var(--ink)}
+}
+.policy-content h3{font:500 16px/1.7 var(--sans);letter-spacing:.05em;color:#554234;margin:20px 0 6px}
+.policy-content h3:first-of-type{margin-top:12px}
