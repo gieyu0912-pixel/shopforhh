@@ -124,8 +124,8 @@
   <form id="loginBox">
     <img alt="" id="loginLogo">
     <h2 id="loginTitle">HOW HOW 出貨系統</h2>
-    <p id="loginHint">第一頁到第五頁請用作業密碼。稽核頁請用稽核密碼。</p>
-    <label>手機末三碼<input id="loginStaff" inputmode="numeric" maxlength="3" autocomplete="off" placeholder="自己的末三碼"></label>
+    <p id="loginHint">第一頁到第五頁，請輸入作業密碼。</p>
+    <label>手機末三碼 (你的手機號碼末三碼 )<input id="loginStaff" inputmode="numeric" maxlength="3" autocomplete="off" placeholder="你的手機號碼末三碼"></label>
     <label>登入密碼<input id="loginPass" type="password" autocomplete="off" placeholder="請輸入密碼"></label>
     <button type="submit">登入</button>
     <div id="loginErr"></div>
@@ -141,7 +141,7 @@
       <button id="testBtn" type="button">測試客戶／狀態</button>
       <button id="onlyOpen" type="button">只看未完成</button>
       <button id="print" type="button">列印此頁</button>
-      <button id="export" type="button">匯出存檔</button>
+      <button id="export" type="button">匯出Excel</button>
     </div>
     <div class="staffbar" id="staffbar"></div>
     <div id="testTip" class="sub" style="margin-top:8px">按「測試客戶／狀態」會建立測*戶，並依序推進狀態。</div>
@@ -293,9 +293,87 @@ document.querySelectorAll(".pages button").forEach(btn => btn.addEventListener("
 ["q","method","group"].forEach(id => document.getElementById(id).addEventListener("input", render));
 document.getElementById("onlyOpen").addEventListener("click", e => { onlyOpen = !onlyOpen; e.target.classList.toggle("active", onlyOpen); render(); });
 document.getElementById("print").addEventListener("click", () => window.print());
-document.getElementById("export").addEventListener("click", () => {
-  const blob = new Blob([JSON.stringify(db, null, 2)], {type:"application/json"});
-  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "出貨存檔.json"; a.click();
+const PASS_EXPORT = "asdfghjkl";
+function crc32(buf){
+  let c = ~0;
+  for (let i = 0; i < buf.length; i++) {
+    c ^= buf[i];
+    for (let k = 0; k < 8; k++) c = (c >>> 1) ^ (0xEDB88320 & -(c & 1));
+  }
+  return (~c) >>> 0;
+}
+function u16(n){ return [n & 255, (n >> 8) & 255]; }
+function u32(n){ return [n & 255, (n >> 8) & 255, (n >> 16) & 255, (n >> 24) & 255]; }
+function zipStore(files){
+  const enc = new TextEncoder();
+  const parts = [];
+  const central = [];
+  let offset = 0;
+  files.forEach(f => {
+    const name = enc.encode(f.name);
+    const data = enc.encode(f.data);
+    const crc = crc32(data);
+    const local = [...u32(0x04034b50), ...u16(20), ...u16(0), ...u16(0), ...u16(0), ...u16(0), ...u32(crc), ...u32(data.length), ...u32(data.length), ...u16(name.length), ...u16(0)];
+    parts.push(new Uint8Array(local), name, data);
+    const cen = [...u32(0x02014b50), ...u16(20), ...u16(20), ...u16(0), ...u16(0), ...u16(0), ...u16(0), ...u32(crc), ...u32(data.length), ...u32(data.length), ...u16(name.length), ...u16(0), ...u16(0), ...u16(0), ...u16(0), ...u32(0), ...u32(offset)];
+    central.push(new Uint8Array(cen), name);
+    offset += local.length + name.length + data.length;
+  });
+  const centralStart = offset;
+  let centralSize = 0;
+  central.forEach(p => centralSize += p.length);
+  const end = new Uint8Array([...u32(0x06054b50), ...u16(0), ...u16(0), ...u16(files.length), ...u16(files.length), ...u32(centralSize), ...u32(centralStart), ...u16(0)]);
+  return new Blob([...parts, ...central, end], {type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
+}
+function colName(n){
+  let s = "";
+  n += 1;
+  while (n) { const m = (n - 1) % 26; s = String.fromCharCode(65 + m) + s; n = Math.floor((n - 1) / 26); }
+  return s;
+}
+function sheetXml(rows){
+  const body = rows.map((r, i) => `<row r="${i+1}">` + r.map((v, j) => {
+    const ref = colName(j) + (i + 1);
+    const s = String(v ?? "").replace(/&/g,"&").replace(/</g,"<").replace(/>/g,">");
+    return `<c r="${ref}" t="inlineStr"><is><t>${s}</t></is></c>`;
+  }).join("") + `</row>`).join("");
+  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetData>${body}</sheetData></worksheet>`;
+}
+function excelFile(name, rows){
+  const blob = zipStore([
+    {name:"[Content_Types].xml", data:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/></Types>`},
+    {name:"_rels/.rels", data:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>`},
+    {name:"xl/workbook.xml", data:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="${name.slice(0,28)}" sheetId="1" r:id="rId1"/></sheets></workbook>`},
+    {name:"xl/_rels/workbook.xml.rels", data:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/></Relationships>`},
+    {name:"xl/worksheets/sheet1.xml", data:sheetXml(rows)}
+  ]);
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = name + ".xlsx";
+  a.click();
+}
+function shipRows(list){
+  const head = ["出貨單","群組","訂購人ID","收件人","出貨方式","目的地","店號","項數","件數","商品清單","狀態","撿貨員","撿貨時間","出貨員","出貨時間","寄貨員","寄貨時間","物流時間","備註"];
+  return [head, ...list.map(s => {
+    const r = rec(s.no);
+    return [s.no,s.group,s.id,s.mask,s.method,s.dest,s.code,s.items,s.qty,s.list,statusOf(s.no),r.picker,r.pick&&r.pick.at,r.packer,r.pack&&r.pack.at,r.sender,r.send&&r.send.at,r.transit&&r.transit.at,s.note];
+  })];
+}
+document.getElementById("export").addEventListener("click", async () => {
+  const pass = prompt("請輸入匯出密碼");
+  if (pass === null) return;
+  if (pass !== PASS_EXPORT) { alert("密碼不正確"); return; }
+  const page = PAGE_NAME[view] || "出貨";
+  if (view === "audit") {
+    let rows = loadAudit();
+    try { rows = [...await loadShared(), ...rows]; } catch(e) {}
+    const seen = new Set();
+    rows = rows.filter(r => { const k=[r.at,r.staff,r.action,r.page,r.no].join("|"); if(seen.has(k)) return false; seen.add(k); return true; });
+    excelFile("稽核_" + now().slice(0,10), [["時間","身分","末三碼","頁面","動作","出貨單","訂購人","收件人","方式","狀態","相關資料","目的地"], ...rows.map(r => [r.at,r.role,r.staff,r.page,r.action,r.no,r.id,r.mask,r.method,r.status,r.detail,r.dest])]);
+  } else {
+    excelFile(page + "_" + now().slice(0,10), shipRows(filtered()));
+  }
+  audit("匯出Excel", {detail: page});
 });
 const TEST_NO = "TEST-000";
 function ensureTest(){
@@ -341,7 +419,7 @@ function runTest(){
 }
 document.getElementById("testBtn").addEventListener("click", runTest);
 const AUDIT_KEY = "ship-audit-20261010";
-const PASS_OPS = "4rfvbgt5hh";
+const PASS_OPS = "howhow2021";
 const PASS_AUDIT = "asdfghjkl";
 const PAGE_NAME = {list:"商品出貨清單", pick:"撿貨", pack:"出貨", send:"寄貨", track:"客戶貨況狀態", audit:"稽核"};
 let session = null;
